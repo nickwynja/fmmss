@@ -1,0 +1,3 @@
+- `make dev`: run in flask development server, accessible at http://localhost:5000
+- `make build`: build the docker image
+- `make up`: bring up with docker-compose, accessible at http://localhost:8080
