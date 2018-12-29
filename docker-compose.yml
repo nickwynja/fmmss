@@ -6,3 +6,9 @@ services:
     build: .
     ports:
      - "8088:80"
+    networks:
+      - mm_mailman
+
+networks:
+  mm_mailman:
+    external: true
