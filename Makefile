@@ -39,5 +39,5 @@ shell :
 	docker exec -ti $(CONTAINER) /bin/bash
 
 service:
-	cp docker-compose-links.service /etc/systemd/system/docker-compose-links.service 
-	systemctl enable docker-compose-links
+	cp docker-compose-fmmss.service /etc/systemd/system/docker-compose-fmmss.service
+	systemctl enable docker-compose-fmmss

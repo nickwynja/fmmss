@@ -1,14 +1,14 @@
 # /etc/systemd/system/docker-compose-links.service
 
 [Unit]
-Description=Docker Compose Links Service
+Description=Docker Compose Fmmss Service
 Requires=docker.service
 After=docker.service
 
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-WorkingDirectory=/var/www/pin-less-popular
+WorkingDirectory=/var/www/fmmss
 ExecStart=/usr/local/bin/docker-compose up -d
 ExecStop=/usr/local/bin/docker-compose down
 TimeoutStartSec=0
