@@ -4,6 +4,11 @@ from mailmanclient import Client
 
 app = Flask(__name__)
 
+@app.route("/")
+def index():
+    # For site uptime checks
+    return ('', 200)
+
 @app.route("/1.0/subscribe", methods = ['POST'])
 def subscribe():
     lists = []
