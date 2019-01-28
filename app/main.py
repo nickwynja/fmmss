@@ -11,6 +11,11 @@ def index():
 
 @app.route("/1.0/subscribe", methods = ['POST'])
 def subscribe():
+    # First, check honeypot for bot activity
+    if 'bottle_of_mead' in request.form and request.form['bottle_of_mead'] is True:
+        print('spam: ', request.data)
+        return ('', 404)
+
     lists = []
     for r in request.form:
         if r.startswith('list-'):
@@ -31,7 +36,12 @@ def subscribe():
             # not a user
             try:
                 # http://docs.mailman3.org/projects/mailmanclient/en/3.1.0/apiref.html#mailmanclient._client.MailingList.subscribe
-                list.subscribe(email, name, True, True, True)
+                sub_policy = list.settings['subscription_policy']
+                if sub_policy == "open":
+                    list.subscribe(email, name, True, True)
+                else:
+                    list.subscribe(email, name)
+
                 return redirect(success_url, code=302)
             except:
                 return redirect(error_url, code=302)
