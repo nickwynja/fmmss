@@ -13,7 +13,6 @@ def index():
 def subscribe():
     # First, check honeypot for bot activity
     if 'bottle_of_mead' in request.form and request.form['bottle_of_mead'] is True:
-        print('spam: ', request.data)
         return ('', 404)
 
     lists = []
