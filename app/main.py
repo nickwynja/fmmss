@@ -31,15 +31,14 @@ def subscribe():
     for r in request.form:
         if r.startswith('list-'):
             lists.append(request.form[r])
-    email = request.form['email']
-    name = request.form['name']
+    email = request.form['listEmail']
+    name = request.form['listName']
     success_url = request.form['success_redirect_url']
     error_url = request.form['error_redirect_url']
 
     # First, check honeypot for bot activity
-  #  abort(404)
-    if 'bottle_of_mead' in request.form and request.form['bottle_of_mead'] is not "":
-        app.logger.error('SPAM from %s' % email)
+    if 'email' in request.form and request.form['email'] != "":
+        app.logger.error('SPAM on %s from %s' % (lists[0], email))
         return redirect(error_url, code=302)
 
     client = Client('http://172.22.199.2:8001/3.1', 'restadmin', 'restpass')
@@ -48,7 +47,7 @@ def subscribe():
         try:
             list = client.get_list(l)
             user = list.get_member(email)
-            app.logger.info('Successfully registered %s' % email)
+            app.logger.info('User already registered %s' % email)
             return redirect(success_url, code=302)
         except:
             # not a user
@@ -59,12 +58,10 @@ def subscribe():
                     list.subscribe(email, name, True, True)
                 else:
                     list.subscribe(email, name)
-
-                app.logger.info('Successfully registered %s' % email)
+                app.logger.info('Successfully registered %s as %s' % (email, name))
                 return redirect(success_url, code=302)
             except:
                 return redirect(error_url, code=302)
-            return redirect(error_url, code=302)
 
 
 @app.route("/1.0/unsubscribe", methods = ['POST'])
