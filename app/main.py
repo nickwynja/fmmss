@@ -1,4 +1,4 @@
-from flask import Flask, redirect, request, abort
+from flask import Flask, redirect, request
 from mailmanclient import Client
 from logging.config import dictConfig
 
@@ -20,12 +20,14 @@ dictConfig({
 
 app = Flask(__name__)
 
+
 @app.route("/")
 def index():
     # For site uptime checks
     return ('', 200)
 
-@app.route("/1.0/subscribe", methods = ['POST'])
+
+@app.route("/1.0/subscribe", methods=['POST'])
 def subscribe():
     lists = []
     for r in request.form:
@@ -47,9 +49,10 @@ def subscribe():
         try:
             list = client.get_list(l)
             user = list.get_member(email)
-            app.logger.info('User already registered %s' % email)
-            return redirect(success_url, code=302)
-        except:
+            if user:
+                app.logger.info('User already registered %s' % email)
+                return redirect(success_url, code=302)
+        except Exception:
             # not a user
             try:
                 # http://docs.mailman3.org/projects/mailmanclient/en/3.1.0/apiref.html#mailmanclient._client.MailingList.subscribe
@@ -58,27 +61,29 @@ def subscribe():
                     list.subscribe(email, name, True, True)
                 else:
                     list.subscribe(email, name)
-                app.logger.info('Successfully registered %s as %s' % (email, name))
+                app.logger.info(
+                    'Successfully registered %s as %s' % (email, name))
                 return redirect(success_url, code=302)
-            except:
+            except Exception:
                 return redirect(error_url, code=302)
 
 
-@app.route("/1.0/unsubscribe", methods = ['POST'])
+@app.route("/1.0/unsubscribe", methods=['POST'])
 def unsubscribe():
     email = request.form['email']
-    l = request.form['list']
+    mail_list = request.form['list']
     success_url = request.form['success_redirect_url']
     error_url = request.form['error_redirect_url']
 
     client = Client('http://172.22.199.2:8001/3.1', 'restadmin', 'restpass')
-    list = client.get_list(l)
+    list = client.get_list(mail_list)
 
     try:
         list.unsubscribe(email)
         return redirect(success_url, code=302)
-    except:
+    except Exception:
         return redirect(error_url, code=302)
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True, port=5000)
